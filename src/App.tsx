@@ -1,6 +1,7 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from "styled-components"; // 전역적으로 스타일 적용
 import Router from "./Router";
 
+// 스타일 컴포넌트는 도큐먼트의 head로 찾아가서 reset.css를 주입
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
 html, body, div, span, applet, object, iframe,
@@ -50,10 +51,15 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+// theme.ts (내가 정의한 테마)에서 가져온 것들
 body {
   font-family: 'Source Sans Pro', sans-serif;
   background-color: ${(props) => props.theme.bgColor};
   color: ${(props) => props.theme.textColor}
+}
+a {
+  text-decoration: none;
+  color: inherit;
 }
 `;
 
