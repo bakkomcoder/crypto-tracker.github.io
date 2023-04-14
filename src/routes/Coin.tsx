@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "react-query";
 import {
   Switch,
   Route,
@@ -10,6 +11,8 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Chart from "./Chart";
 import Price from "./Price";
+import { fetchCoinInfo } from "../api";
+import { fetchCoinTickers } from "../api";
 
 const Title = styled.h1`
   font-size: 48px;
@@ -142,35 +145,25 @@ interface PriceData {
 }
 
 function Coin() {
-  const [loading, setLoading] = useState(true);
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
-  // routeMatch에게 우리가 coinId/price라는 URL에 있는지 확인해달라고 함
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
-  // console.log(priceMatch); // 내가 있는 url에 있는 탭을 누르면 object를, 아니면 null을 반환하고 있음.
-  // 즉, null이 아니라면 올바른 URL에서 그에 맞는 탭을 입력한 것이므로 object를 반환해주어야 한다. (Tab 이하)
-  // "/:coinId/price" 에서 price 탭 & "/:coinId/chart" 에서 chart 탭
-  useEffect(() => {
-    (async () => {
-      const infoData = await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false); //
-    })();
-  }, [coinId]); // coinId가 변하면 코드가 다시 동작 but URL에 위치하기 때문에 절대 변하지 않으므로 이 컴포넌트는 한 번만 동작하게 된다.
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
+    ["info", coinId],
+    () => fetchCoinInfo(coinId)
+  ); // 리액트 쿼리는 유니크한 id를 받으므로 coinId만 해선 안된다. 리액트쿼리가 query를 array로 보고 있어서 이렇게 만들 수 있다.
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(coinId)
+  ); // 마찬가지로 isLoading, data 이름을 바꿔주자.
+  // 리액트 쿼리를 사용함으로써 생략 가능한 부분 (api.ts에서 정의한 fetcher 함수)
+  const loading = infoLoading || tickersLoading;
   return (
     <Container>
       <Header>
         <Title>
-          {state?.name ? state.name : loading ? "Loading..." : info?.name}
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
       </Header>
       {loading ? (
@@ -180,26 +173,26 @@ function Coin() {
           <Overview>
             <OverviewItem>
               <span>Rank:</span>
-              <span>{info?.rank}</span>
+              <span>{infoData?.rank}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Symbol:</span>
-              <span>${info?.symbol}</span>
+              <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Open Source:</span>
-              <span>{info?.open_source ? "Yes" : "No"}</span>
+              <span>{infoData?.open_source ? "Yes" : "No"}</span>
             </OverviewItem>
           </Overview>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
               <span>Total Suply:</span>
-              <span>{priceInfo?.total_supply}</span>
+              <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{priceInfo?.max_supply}</span>
+              <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
 

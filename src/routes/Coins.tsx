@@ -23,9 +23,10 @@ const Coin = styled.li`
   border-radius: 15px;
   margin-bottom: 10px;
   a {
+    display: flex;
+    align-items: center;
     padding: 20px;
     transition: color 0.2s ease-in;
-    display: block;
   }
   &:hover {
     a {
@@ -45,6 +46,8 @@ const Loader = styled.span`
 `;
 
 const Img = styled.img`
+  width: 35px;
+  height: 35px;
   margin-right: 10px;
 `;
 
@@ -59,7 +62,7 @@ interface ICoin {
 }
 
 function Coins() {
-  // useQuery hook이 나의 fetcher함수를 부르고(api.ts), fetcher함수가 loading 중이라면 react query는 여기서 그걸 알려줄거야.
+  // useQuery hook이 나의 fetcher함수를 부르고(api.ts), fetcher함수가 loading 중이라면 react query는 여기서 그걸 알려줄거야. interface를 array로 받고 있다.
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
   // console.log(isLoading, data);
   return (
@@ -77,7 +80,7 @@ function Coins() {
                 to={{ pathname: `/${coin.id}`, state: { name: coin.name } }}
               >
                 <Img
-                  src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+                  src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`}
                 />
                 {coin.name} &rarr;
               </Link>

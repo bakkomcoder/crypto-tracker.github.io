@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components"; // 전역적으로 스타일 적용
 import Router from "./Router";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 // 스타일 컴포넌트는 도큐먼트의 head로 찾아가서 reset.css를 주입
 const GlobalStyle = createGlobalStyle`
@@ -68,6 +69,7 @@ function App() {
     <>
       <GlobalStyle />
       <Router />
+      <ReactQueryDevtools initialIsOpen={true} />
     </>
   );
 }
