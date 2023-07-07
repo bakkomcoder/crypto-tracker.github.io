@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/bkkompark/crypto-tracker/static/js/main.e7096a4d.js",
+    "index.html": "/bkkompark/crypto-tracker/index.html",
+    "main.e7096a4d.js.map": "/bkkompark/crypto-tracker/static/js/main.e7096a4d.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.e7096a4d.js"
+  ]
+}
